@@ -30,6 +30,8 @@ private:
             return data_.empty();
         }
         size_t free_count() const {
+            //size_t  =  long unsigned int
+            //空余空间
             // capacity_为0时，允许放入一个，但_queue会处于overflow状态
             return capacity_ - data_.size();
         }
@@ -56,13 +58,18 @@ private:
         template <typename TR>
         bool pop(TR &data) {
             std::unique_lock<std::mutex> lock(this->mutex_);
+            //awake when queue is not empty or is closed
             this->cv_.wait(lock, [&]() { return !is_empty() || closed_; });
+
             if (this->is_empty()) {
                 return false;  // 已关闭
             }
 
+            //get a data from queue
             data = this->data_.front();
             this->data_.pop_front();
+
+            //increment count
             this->pop_count_++;
 
             if (this->free_count() == 1) {
@@ -76,6 +83,7 @@ private:
         template <typename TR>
         bool push(TR &&data) {
             std::unique_lock<std::mutex> lock(mutex_);
+            //waiting for spare space or close
             cv_.wait(lock, [this]() { return free_count() > 0 || closed_; });
             if (closed_) {
                 return false;
@@ -105,8 +113,8 @@ public:
     Channel(const Channel &) = default;
     Channel &operator=(const Channel &) = default;
     // 支持move
-    Channel(Channel &&) = default;
-    Channel &operator=(Channel &&) = default;
+    Channel(Channel &&) noexcept = default;
+    Channel &operator=(Channel &&) noexcept = default;
 
     // 入chan，支持move语义
     template <typename TR>

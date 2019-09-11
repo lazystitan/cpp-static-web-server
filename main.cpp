@@ -15,11 +15,11 @@ using namespace std;
 using namespace chrono_literals;
 
 struct Worker {
-    void operator() (Channel<int> channel) {
+    void operator() (Channel<int> channel, int id) {
         int n;
         cout << "thread id:" << this_thread::get_id() <<endl;
         while (channel >> n) {
-            cout << n << endl;
+            cout << "thread " << id << " : " << n << endl;
             this_thread::sleep_for(100ms);
         }
     }
@@ -35,14 +35,16 @@ int main(int arg, char *argv[]) {
     mutex mtx;
     condition_variable cv;
     thread threads[5];
-    for (auto & i : threads) {
-        i = thread(Worker{}, channel);
+    for (int i = 0; i < 5; i++) {
+        threads[i] = thread(Worker{}, channel, i);
     }
 
-    for (int j = 0; j < 10; ++j) {
+    for (int j = 0; j < 1000; ++j) {
         channel << j;
 //        cout << j <<endl;
     }
+
+    channel.close();
 
     for(auto &t : threads)
         t.join();
