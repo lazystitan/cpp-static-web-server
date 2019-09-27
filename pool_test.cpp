@@ -23,13 +23,14 @@ int main() {
         v[j] = Request::test();
     }
 
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 5; ++i) {
         Work work;
         work._function = do_something;
         work._request = &v[i];
         channel << work;
     }
 
+    threadPool.close();
 
     return 0;
 }

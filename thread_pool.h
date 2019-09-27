@@ -27,8 +27,7 @@ class Worker {
 public:
     void operator()(int id, Channel<Work> &channel) {
         Work work;
-        while (!channel.is_closed()) {
-            channel >> work;
+        while (channel >> work) {
             work();
         }
     }
@@ -48,6 +47,9 @@ public:
     }
 
     ~ThreadPool() {
+        for (auto &t : *_workers) {
+            t.join();
+        }
         delete [] _workers;
     }
 

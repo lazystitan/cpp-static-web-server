@@ -64,6 +64,8 @@ private:
             if (this->is_empty()) {
                 return false;  // 已关闭
             }
+//            if (closed_)
+//                return false;
 
             //get a data from queue
             data = this->data_.front();
