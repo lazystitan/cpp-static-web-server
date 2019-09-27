@@ -16,6 +16,7 @@ int main() {
     TCPServer server(port);
     server.bind();
     server.listen(5);
+    cout << "start listen" << endl;
 //    auto p = server.accept();
 //    struct sockaddr_in client = p.first;
 //    int client_fd = p.second;

@@ -12,7 +12,7 @@
 
 class TCPServer {
 private:
-    struct sockaddr_in _server_address;
+    sockaddr_in _server_address;
     int _socket_fd;
 public:
     explicit TCPServer(int port) : _server_address{} {
@@ -27,7 +27,7 @@ public:
     }
 //    ~TCPServer();
     void bind() {
-        if (::bind(_socket_fd, (struct sockaddr *) &_server_address, sizeof(_server_address)) < 0) {
+        if (::bind(_socket_fd, (sockaddr *) &_server_address, sizeof(_server_address)) < 0) {
             exit(1);
         }
     }
@@ -35,8 +35,8 @@ public:
         ::listen(_socket_fd, n);
     }
 
-    std::pair<struct sockaddr_in, int> accept() {
-        struct sockaddr_in client{};
+    std::pair<sockaddr_in, int> accept() {
+        sockaddr_in client{};
         socklen_t client_len = sizeof(client);
         int client_socket_fd = ::accept(_socket_fd, (struct sockaddr*)&client, &client_len);
         if (client_socket_fd < 0) {

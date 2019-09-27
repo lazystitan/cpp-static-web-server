@@ -14,8 +14,8 @@
 class TCPClient {
 private:
     int _client_socket_fd;
-    struct sockaddr_in _server_address;
-    struct hostent *_server;
+    sockaddr_in _server_address;
+    hostent *_server;
 
 public:
     TCPClient(char ip[], int port) : _server_address{} {

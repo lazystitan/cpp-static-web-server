@@ -12,9 +12,19 @@
 
 class Request {
 private:
-    struct sockaddr_in _request;
+    sockaddr_in _request;
     int _request_fd;
 public:
+
+    static Request test() {
+        sockaddr_in request{};
+        int request_fd = 0;
+
+        return {request, request_fd};
+    }
+
+    Request() : _request{}, _request_fd(0){}
+
     Request(struct sockaddr_in request, int request_fd) : _request{} {
         _request = request;
         _request_fd = request_fd;
