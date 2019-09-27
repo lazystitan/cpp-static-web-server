@@ -15,8 +15,8 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    int sockfd, portno, n;
-    struct sockaddr_in serv_addr{};
+    int sockfd, port_number, n;
+    struct sockaddr_in server_address{};
     struct hostent *server;
 
     char buffer[256];
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
         cout << "usage " << argv[0] << "hostname port" << endl;
         return 1;
     }
-    portno = atoi(argv[2]);
+    port_number = atoi(argv[2]);
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
         cout << "ERROR opening socket" << endl;
@@ -35,11 +35,11 @@ int main(int argc, char *argv[])
         cout << "ERROR, no such host" << endl;
         return 1;
     }
-//    bzero((char *) &serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    bcopy((char *)server->h_addr,(char *)&serv_addr.sin_addr.s_addr,server->h_length);
-    serv_addr.sin_port = htons(portno);
-    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+//    bzero((char *) &_server_address, sizeof(_server_address));
+    server_address.sin_family = AF_INET;
+    bcopy((char *)server->h_addr,(char *)&server_address.sin_addr.s_addr,server->h_length);
+    server_address.sin_port = htons(port_number);
+    if (connect(sockfd, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
         cout << "ERROR connecting" << endl;
         return 1;
     }
