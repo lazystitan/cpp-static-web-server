@@ -5,7 +5,6 @@
 #include <iostream>
 #include <cstring>
 
-#include "mult_thread_server.h"
 #include "request.h"
 #include "server.h"
 #include "thread_pool.h"
@@ -19,7 +18,9 @@ void handle_request(Request &request) {
     bzero(buffer, BUFFER_LEN);
     request.read(buffer, BUFFER_LEN - 1);
     cout << buffer << endl;
-    char content[] = "Hello, this is a multiple thread web server.";
+    char content[] = "HTTP/1.1 200 OK \r\n"
+                     "\r\n"
+                     "<p>Hello, this is a multiple thread web server.<p>";
     request.send(content, strlen(content), 0);
     request.close();
 }
@@ -31,7 +32,7 @@ int main() {
     Channel<Work> channel;
     ThreadPool threadPool(5, channel);
 
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 40; ++i) {
         Request request(tcpServer.accept());
         Work work;
         work._request = &request;
