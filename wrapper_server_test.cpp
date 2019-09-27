@@ -6,30 +6,35 @@
 #include <cstring>
 
 #include "server.h"
+#include "request.h"
 
 using namespace std;
 
 int main() {
     char buffer[4096];
-
     int port = 60000;
-    Server server(port);
+    TCPServer server(port);
     server.bind();
     server.listen(5);
-    auto p = server.accept();
-    struct sockaddr_in client = p.first;
-    int client_fd = p.second;
+//    auto p = server.accept();
+//    struct sockaddr_in client = p.first;
+//    int client_fd = p.second;
+
+    Request request(server.accept());
+
     cout << "got connection" << endl;
     char content[] = "Hello,world!\n";
-    Server::send(client_fd, content, 13, 0);
+//    TCPServer::send(client_fd, content, 13, 0);
+    request.send(content, 255, 0);
     bzero(buffer, 256);
-    int read_size = Server::read(client_fd, buffer, 255);
+//    int read_size = TCPServer::read(client_fd, buffer, 255);
+    int read_size = request.read(buffer, 255);
     if (read_size < 0) {
         cout << "error" << endl;
     }
     cout << buffer << endl;
     server.close();
-    close(client_fd);
+    request.close();
 
     return 0;
 }

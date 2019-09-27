@@ -10,12 +10,12 @@
 #include <cstdlib>
 #include <unistd.h>
 
-class Server {
+class TCPServer {
 private:
     struct sockaddr_in _server_address;
     int _socket_fd;
 public:
-    explicit Server(int port) : _server_address{} {
+    explicit TCPServer(int port) : _server_address{} {
         //create a socket, using fd represent it
         _socket_fd = socket(AF_INET, SOCK_STREAM, 0);
         if (_socket_fd < 0)
@@ -25,7 +25,7 @@ public:
         _server_address.sin_addr.s_addr = INADDR_ANY;
         _server_address.sin_port = htons(port);
     }
-//    ~Server();
+//    ~TCPServer();
     void bind() {
         if (::bind(_socket_fd, (struct sockaddr *) &_server_address, sizeof(_server_address)) < 0) {
             exit(1);

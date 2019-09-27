@@ -11,7 +11,7 @@ using namespace std;
 int main() {
     char buffer[4096];
     char ip[] = "127.0.0.1";
-    Client client(ip, 60000);
+    TCPClient client(ip, 60000);
     client.connect();
     bzero(buffer, 256);
     cout << "please enter the message:";

@@ -11,14 +11,14 @@
 #include <cstring>
 #include <unistd.h>
 
-class Client {
+class TCPClient {
 private:
     int _client_socket_fd;
     struct sockaddr_in _server_address;
     struct hostent *_server;
 
 public:
-    Client(char ip[], int port) : _server_address{} {
+    TCPClient(char ip[], int port) : _server_address{} {
         _client_socket_fd = socket(AF_INET, SOCK_STREAM, 0);
         if (_client_socket_fd < 0) {
             exit(1);
