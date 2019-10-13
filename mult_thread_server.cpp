@@ -16,6 +16,10 @@
 
 using namespace std;
 
+/*
+ * 根据文件名获取html，加入buffer中，n是缓冲区大小
+ * 假如没有找到对应的html，将404.html的内容加入buffer
+ */
 void get_html(const char filename[], char buffer[], int n) {
     ifstream fin(filename);
 
@@ -45,6 +49,9 @@ void get_html(const char filename[], char buffer[], int n) {
     fin.close();
 }
 
+/*
+ * 处理请求
+ */
 void handle_request(Request &request) {
     char buffer[BUFFER_LEN];
     bzero(buffer, BUFFER_LEN);
@@ -65,21 +72,27 @@ void handle_request(Request &request) {
 }
 
 int main() {
+    //创建TCP socket
     TCPServer tcpServer(60000);
     tcpServer.bind();
     tcpServer.listen(5);
+
+    //创建channel
     Channel<Work> channel;
+    //创建线程池
     ThreadPool threadPool(5, channel);
 
-
+    //接受请求
     for (int i = 0; i < MAX_REQUEST_TIMES; ++i) {
         Request request(tcpServer.accept());
         Work work;
         work._request = &request;
         work._function = handle_request;
+        //将work通过channel传入线程池
         channel << work;
     }
 
+    //关闭线程池
     threadPool.close();
     return 0;
 }

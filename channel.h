@@ -59,19 +59,20 @@ private:
         bool pop(TR &data) {
             std::unique_lock<std::mutex> lock(this->mutex_);
             //awake when queue is not empty or is closed
+            //当queue不是空的，或者被关闭掉的情况出现，清醒
             this->cv_.wait(lock, [&]() { return !is_empty() || closed_; });
 
+            //如果queue不是空的，获取一个data，并从queue中删除此data
+            //这里不可以将pop返回false的条件设置为是否关闭，
+            // 否则会导致queue中还存在未处理的数据因为queue已关闭就无法进行处理
             if (this->is_empty()) {
                 return false;  // 已关闭
             }
-//            if (closed_)
-//                return false;
-
-            //get a data from queue
             data = this->data_.front();
             this->data_.pop_front();
 
             //increment count
+            //将出queue的data计数加一
             this->pop_count_++;
 
             if (this->free_count() == 1) {
@@ -87,10 +88,12 @@ private:
             std::unique_lock<std::mutex> lock(mutex_);
             //waiting for spare space or close
             cv_.wait(lock, [this]() { return free_count() > 0 || closed_; });
+            //如果已经关闭，不允许再向queue加入元素
             if (closed_) {
                 return false;
             }
 
+            //为什么只考虑data_只有一个元素的情况
             data_.push_back(std::forward<TR>(data));
             if (data_.size() == 1) {
                 cv_.notify_all();
